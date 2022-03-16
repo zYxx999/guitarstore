@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>Гитарные войны. Список рейтингов</title>
@@ -23,9 +25,10 @@ $data = mysqli_query($dbc, $query);
 
 // Извлечение данных из массива рейтингов в цикле
 // Форматирование данных записей в виде кода HTML
-$i = 0;
+
 echo '<table>';
-while ($row = mysqli_fetch_array($data)){
+$i = 0;
+while ($row = mysqli_fetch_array($data)) {
     // Вывод данных рейтинга
     if($i == 0){
         echo '<tr><td colspan="2" class="topscoreheader"> Наивысший рейтинг:' . $row['score'] . '</td></tr>';

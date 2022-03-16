@@ -1,3 +1,9 @@
+<?php
+session_start();
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>Гитарные войны. Список рейтингов</title>
@@ -11,20 +17,25 @@ require_once('appvars.php');
 require_once('connectvars.php');
 
 if (isset($_POST['submit'])) {
+
     //Соединение с базой данных
     $dbc = mysqli_connect("localhost", "root", "", "guitar_score");
 
+    // Возьмите данные о результатах из POST
     $name = mysqli_real_escape_string($dbc, trim($_POST['name']));
     $score = mysqli_real_escape_string($dbc, trim($_POST['score']));
     $screenshot = mysqli_real_escape_string($dbc, trim($_FILES['screenshot']['name']));
     $screenshot_type = $_FILES['screenshot']['type'];
     $screenshot_size = $_FILES['screenshot']['size'];
 
-    if (!empty($name) && is_numeric($score) && !empty($screenshot)) {
-        if ((($screenshot_type == 'image/gif') || ($screenshot_type == 'image/jpeg') || ($screenshot_type == 'image/pjpeg') || ($screenshot_type == 'image/png'))        && ($screenshot_size > 0) && ($screenshot_size <= GW_MAXFILESIZE)) {
-            if ($_FILES['screenshot']['error'] == 0) {
+    // Проверьте кодовую фразу CAPTCHA для проверки
+    $user_pass_phrase = SHA1($_POST['verify']);
+    if ($_SESSION['pass_phrase'] == $user_pass_phrase) {
+        if (!empty($name) && is_numeric($score) && !empty($screenshot)) {
+            if ((($screenshot_type == 'image/gif') || ($screenshot_type == 'image/jpeg') || ($screenshot_type == 'image/pjpeg') || ($screenshot_type == 'image/png')) && ($screenshot_size > 0) && ($screenshot_size <= GW_MAXFILESIZE)) {
+                if ($_FILES['screenshot']['error'] == 0) {
 
-                //Перемещение файла в постоянный каталог для файлов изображения
+                // Перемещение файла в постоянный каталог для файлов изображения
                 $target = GW_UPLOADPATH . $screenshot;
                 if (move_uploaded_file($_FILES['screenshot']['tmp_name'], $target)) {
 
@@ -44,18 +55,20 @@ if (isset($_POST['submit'])) {
                 $score = "";
                 $screenshot = "";
 
-                mysqli_close($dbc);
-            }  else {
-                    echo '<p class="error">Извините, возникла проблема с загрузкой вашего скриншота.</p>';
+                    mysqli_close($dbc);
                 }
             }
         }      else {        echo '<p class="error">Снимок экрана должен быть файлом изображения в формате GIF, JPEG или PNG размером не более ' . (GW_MAXFILESIZE / 1024) . ' Кб .</p>';      }
 
-        // Попробуйте удалить временный файл изображения снимка экрана
-        @unlink($_FILES['screenshot']['tmp_name']);
+            // Попробуйте удалить временный файл изображения снимка экрана
+            @unlink($_FILES['screenshot']['tmp_name']);
+        }
+        else {
+            echo '<p class="error">Пожалуйста, введите всю информацию, чтобы добавить свой высокий балл</p>';
+        }
     }
     else {
-        echo '<p class="error">Пожалуйста, введите всю информацию, чтобы добавить свой высокий балл.</p>';
+        echo '<p class="error">Пожалуйста, введите проверочную кодовую фразу точно так, как показано на рисунке.</p>';
     }
 }
 ?>
@@ -68,7 +81,9 @@ if (isset($_POST['submit'])) {
     <label for="score">Рейтинг:</label>
     <input type="text" id="score" name="score" value="<?php if (!empty($score)) echo $score; ?>" /><br />
     <label for="screenshot">Фотография:</label>
-    <input type="file" id="screenshot" name="screenshot" />
+    <input type="file" id="screenshot" name="screenshot" /><br />
+    <label for="verify">Подтверждение:</label>
+    <input type="text" id="verify" name="verify" value="Введите кодовую фразу." /> <img src="captcha.php" alt="Проверочная кодовая фраза" />
     <hr />
     <input type="submit" value="Добавить" name="submit" />
 </form>

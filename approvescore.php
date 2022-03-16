@@ -53,15 +53,17 @@ if (isset($_POST['submit'])) {
     }
 }
 else if (isset($id) && isset($name) && isset($date) && isset($score)) {
-    echo '<p>Вы уверены, что хотите удалить этот рейтинг</p>';
-    echo '<p><strong>Имя: </strong>' . $name . '<br> <strong>Дата: </strong>' . $date . '<br> <strong>Рейтинг: </strong>' . $score . '</p>';
-    echo '<from method="post" action="removescore.php">';
-    echo '<input type="radio" name="confirm" value="Да"> Да';
-    echo '<input type="radio" name="confirm" value="Нет" checked="checked"> Нет <br>';
-    echo '<input type="submit"  value="Удалить" name="submit">';
-    echo '<input type="hidden" name="id" value="' . $id . '">';
-    echo '<input type="hidden" name="id" value="' . $id . '">';
-    echo '<input type="hidden" name="score" value="' .$score . '">';
+    echo '<p>Are you sure you want to approve the following high score?</p>';
+    echo '<p><strong>Name: </strong>' . $name . '<br /><strong>Date: </strong>' . $date .
+        '<br /><strong>Score: </strong>' . $score . '</p>';
+    echo '<form method="post" action="approvescore.php">';
+    echo '<img src="' . GW_UPLOADPATH . $screenshot . '" width="160" alt="Score image" /><br />';
+    echo '<input type="radio" name="confirm" value="Yes" /> Да ';
+    echo '<input type="radio" name="confirm" value="No" checked="checked" /> Нет <br />';
+    echo '<input type="submit" value="Submit" name="submit" />';
+    echo '<input type="hidden" name="id" value="' . $id . '" />';
+    echo '<input type="hidden" name="name" value="' . $name . '" />';
+    echo '<input type="hidden" name="score" value="' . $score . '" />';
     echo '</form>';
 }
 
