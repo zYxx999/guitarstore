@@ -19,7 +19,7 @@ $img = imagecreatetruecolor(CAPTCHA_WIDTH, CAPTCHA_HEIGHT);
 // Установка цветов: белого для фона, черного для текста и серого для графических элементов
 
 $bg_color = imagecolorallocate($img, 255, 255, 255); // белый цвет
-$text_color = imagecolorallocate($img, 0, 0, 0); // черный цвет
+$text_color = imagecolorallocate($img, 255, 255, 255); // белый цвет
 $graphic_color = imagecolorallocate($img, 64, 64, 64); // серый цвет
 
 // Заполнение фона
